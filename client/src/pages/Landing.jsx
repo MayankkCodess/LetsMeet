@@ -21,7 +21,7 @@ const Landing = () => {
             <h1 style={{marginBottom:0}}><span style={{color:"#FF9839"}}>Connect</span> with your loved Ones</h1>
             <p style={{marginTop:0}}>Cover a distance by LetsMeet</p>
             <div role='button'>
-              <Link to={"/home"}>Get Started</Link>
+              <Link to={"/auth"}>Get Started</Link>
             </div>
           </div>
           <div>

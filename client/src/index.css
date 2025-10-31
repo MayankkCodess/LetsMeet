@@ -3,10 +3,12 @@
 html, body {
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y:auto ;
   height: 100%;
   font-family: 'Poppins', sans-serif;
   box-sizing: border-box;
+  background: black;
 }
 /* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
