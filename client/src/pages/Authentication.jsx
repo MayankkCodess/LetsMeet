@@ -16,8 +16,9 @@ import {
   ThemeProvider,
   createTheme,
 } from "@mui/material";
+import Snackbar from "@mui/material/Snackbar";
 import { styled, alpha } from "@mui/material/styles";
-import { AuthContext } from "../contexts/AuthContext";
+import { AuthContext } from "../contexts/AuthContext.jsx";
 
 /* === Styled components === */
 const Card = styled(MuiCard)(({ theme }) => {
@@ -105,34 +106,86 @@ const darkTheme = createTheme({
 /* === Page component === */
 export default function Authentication() {
   //LetsMeet
-  const [username, setUsername] = useState();
-  const [password, setPassword] = useState();
-  const [name, setName] = useState();
-  const [error, setError] = useState();
-  const [message, setMessage] = useState();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
   const [formState, setFormState] = useState(0);
 
   const [open, setOpen] = useState(false);
 
-  const {handleRegister,handleLogin} = useContext(AuthContext);
- 
-   let handleAuth = async() =>{
-    try{
-      if(formState ===0){
+  const { handleRegister, handleLogin } = useContext(AuthContext);
 
+  let handleAuth = async (e) => {
+    e.preventDefault();
+    try {
+      if(formState ===0){
+        let result = await handleLogin(username,password)
+        setMessage(result);
       }
-      if(formState ===1){
-        let result = await handleRegister(name,username,password);
+      if (formState === 1) {
+        let result = await handleRegister(name, username, password);
         console.log(result);
         setMessage(result);
-        setOpen(true);
       }
-    }catch(err){
-      let message = (err.response.data.message);
+      setMessage("");
+      setUsername("");
+      setOpen(true);
+      setError("");
+      setFormState(0);
+      setPassword("");
+    } catch (err) {
+      let message = err?.response?.data?.message || "Something went wrong!";
       setError(message);
+      setTimeout(() => {
+        setError("");
+      }, 1000);
     }
-   }
+  };
+
+//   let handleAuth = async (e) => {
+//   e.preventDefault();
+
+//   try {
+//     let result;
+
+//     if (formState === 1) {
+//       // --- Sign Up ---
+//       result = await handleRegister(name, username, password);
+//       setMessage("Registration successful! You can now sign in.");
+//     } else {
+//       // --- Sign In ---
+//       result = await handleLogin(username, password);
+//       setMessage("Login successful! Welcome back.");
+//     }
+
+//     console.log(result);
+
+//     // --- Only reset fields on success ---
+//     setUsername("");
+//     setPassword("");
+//     if (formState === 1) setName("");
+
+//     // --- Optional: switch to login after signup ---
+//     if (formState === 1) setFormState(0);
+
+//     setError("");
+//     setOpen(true);
+//   } catch (err) {
+//     // --- Handle errors gracefully ---
+//     const message = err?.response?.data?.message || "Something went wrong!";
+//     setError(message);
+//     console.error("Auth error:", message);
+
+//     setTimeout(() => {
+//       setMessage("");
+//       setError("");
+//     }, 2000);
+//   }
+// };
+
 
   return (
     <ThemeProvider theme={darkTheme}>
@@ -140,7 +193,7 @@ export default function Authentication() {
       <SignInContainer direction="column">
         <Card variant="outlined">
           {/* Header */}
-          <Typography
+          {/* <Typography
             component="h1"
             variant="h4"
             sx={{
@@ -155,7 +208,7 @@ export default function Authentication() {
               Connect
             </Box>
             with your loved Ones
-          </Typography>
+          </Typography> */}
           <Box
             sx={{
               display: "flex",
@@ -165,13 +218,13 @@ export default function Authentication() {
             }}
           >
             <Button
-              variant={formState === 0 ? "contained" : ""}
+              variant={formState === 0 ? "contained" : "outlined"}
               onClick={() => setFormState(0)}
             >
               Sign In
             </Button>
             <Button
-              variant={formState === 1 ? "contained" : ""}
+              variant={formState === 1 ? "contained" : "outlined"}
               onClick={() => setFormState(1)}
             >
               Sign Up
@@ -180,7 +233,7 @@ export default function Authentication() {
           {/* Form */}
           <Box
             component="form"
-            // onSubmit={handleSubmit}
+            onSubmit={handleAuth}
             noValidate
             sx={{
               display: "flex",
@@ -266,19 +319,13 @@ export default function Authentication() {
               />
             </FormControl>
 
-            <FormControlLabel
-              control={<Checkbox sx={{ color: alpha("#ffffff", 0.85) }} />}
-              label={
-                <Typography sx={{ color: "text.secondary" }}>
-                  Remember me
-                </Typography>
-              }
-            />
+            <p style={{ color: "red" }}>{error}</p>
 
             <Button
               type="submit"
               fullWidth
               variant="contained"
+              // onClick={handleAuth}
               sx={{
                 py: 1.2,
                 fontWeight: 700,
@@ -287,35 +334,12 @@ export default function Authentication() {
                 "&:hover": { bgcolor: "primary.dark" },
               }}
             >
-              Sign In
+              {formState === 0 ? "LogIn" : "Register"}
             </Button>
           </Box>
-
-          <Divider sx={{ my: 2, color: alpha("#ffffff", 0.06) }}>or</Divider>
-
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-            
-
-            <Typography
-              sx={{ textAlign: "center", pt: 1, color: "text.secondary" }}
-            >
-              Don&apos;t have an account?{" "}
-              <Link
-                href="#"
-                underline="hover"
-                sx={{ color: "primary.main", fontWeight: 600 }}
-              >
-                Sign Up
-              </Link>
-            </Typography>
-          </Box>
         </Card>
+        <Snackbar open={open} autoHideDuration={4000} message={message} />
       </SignInContainer>
-      <Snackbar>
-        open = {open}
-        autoHideDuration= {4000}
-        message = {message}
-      </Snackbar>
     </ThemeProvider>
   );
 }
