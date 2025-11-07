@@ -124,24 +124,27 @@ export default function Authentication() {
       if(formState ===0){
         let result = await handleLogin(username,password)
         setMessage(result);
+        setOpen(true);
       }
       if (formState === 1) {
         let result = await handleRegister(name, username, password);
         console.log(result);
+        setFormState(0);
+        setName("");
         setMessage(result);
       }
-      setMessage("");
+      // setMessage(""); recent fix
       setUsername("");
       setOpen(true);
       setError("");
-      setFormState(0);
+      // setFormState(0); recent fix
       setPassword("");
     } catch (err) {
       let message = err?.response?.data?.message || "Something went wrong!";
       setError(message);
       setTimeout(() => {
         setError("");
-      }, 1000);
+      }, 2000);
     }
   };
 

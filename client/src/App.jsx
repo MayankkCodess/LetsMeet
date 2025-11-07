@@ -1,22 +1,36 @@
-import "./App.css";
-import Authentication from "./pages/Authentication.jsx";
-import Landing from "./pages/Landing.jsx";
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+
+import './App.css';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import LandingPage from './pages/Landing.jsx';
+import Authentication from './pages/Authentication.jsx';
 import {AuthProvider} from "./contexts/AuthProvider.jsx"
-import VideoMeet from "./pages/VideoMeet.jsx";
+import VideoMeet from './pages/VideoMeet.jsx';
+import HomeWithAuth from './pages/HomeWithAuth.jsx';
+import History from './pages/History.jsx';
+
 function App() {
   return (
-    <>
+    <div className="App">
+
       <Router>
+
         <AuthProvider>
+
+
           <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/auth" element={<Authentication />} />
-            <Route path="/:url" element={<VideoMeet/>}/>
+
+            <Route path='/' element={<LandingPage />} />
+
+            <Route path='/auth' element={<Authentication />} />
+
+            <Route path='/home's element={<HomeWithAuth />} />
+            <Route path='/history' element={<History />} />
+            <Route path='/:url' element={<VideoMeet />} />
           </Routes>
         </AuthProvider>
+
       </Router>
-    </>
+    </div>
   );
 }
 

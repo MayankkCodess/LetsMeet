@@ -12,6 +12,8 @@ export const AuthProvider = ({children})=>{
 
     const [userData,setUserData] = useState(authContext);
 
+    const router = useNavigate();
+
     const handleRegister = async(name,username,password) =>{
 
             const request = await client.post("/register",{
@@ -33,15 +35,38 @@ export const AuthProvider = ({children})=>{
             if(request.status === 200){
                 localStorage.setItem("token",request.data.token); 
                 router("/");
+                alert("User Login Successfully.")
                 return true;
             }
     }
 
-    const router = useNavigate();
-
-    const data = {
-        userData,setUserData,handleRegister,handleLogin
+    const getHistoryOfUser = async () => {
+        
+            let request = await client.get("/get_all_activity", {
+                params: {
+                    token: localStorage.getItem("token")
+                }
+            });
+            return request.data
+      
     }
+
+    const addToUserHistory = async (meetingCode) => {
+       
+            let request = await client.post("/add_to_activity", {
+                token: localStorage.getItem("token"),
+                meeting_code: meetingCode
+            });
+            return request
+       
+    }
+
+  
+    const data = {
+        userData,setUserData,handleRegister,handleLogin,addToUserHistory,getHistoryOfUser
+    }
+
+
     return (
     <AuthContext.Provider value={data}>
         {children}
