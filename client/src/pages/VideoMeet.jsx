@@ -23,7 +23,7 @@ const VideoMeet = () => {
 
     let[audioAvailable,setAudioAvailable] = useState(true);
 
-    let[video,setVideo] = useState();
+    let[video,setVideo] = useState([]);
 
     let[audio,setAudio] = useState();
 
@@ -45,7 +45,7 @@ const VideoMeet = () => {
 
     const videoRef= useRef([]);
 
-    let [vides,setVideos] = useState([]);
+    let [videos,setVideos] = useState([]);
 
     //todo
     //if(isChrome()===false){
@@ -118,6 +118,34 @@ const VideoMeet = () => {
       }
     },[audio,video])
 
+
+    // TODO Add Message
+    let connectToSocketServer = () =>{
+      socketRef.current = io.connect(server_url , {secure:false});
+      socketRef.current.on("signal",gotMessageFromServer);
+  
+      socketRef.current.on("connect",()=>{
+
+        socketRef.current.emit("join-call" , window.location.href);
+        
+        socketIdRef.current = socketRef.current.id
+
+        socketRef.current.on("chat-message",addMessage);
+
+        socketRef.current.on("user-left",(id)=>{
+          setVideo((videos)=>videos.filter((video)=>video.socketId!==id))
+        })
+
+        socketRef.current.on("user-joined",(id,clients)=>{
+          clients.forEach((socketListId) => {
+
+            connections[socketListId]= new RTCPeerConnection(peerConfigConnections)
+          })
+        })
+
+      })
+    }
+
     let getMedia = () =>{
       setVideo(videoAvailable);
       setAudio(audioAvailable);
@@ -132,7 +160,7 @@ const VideoMeet = () => {
         <h3>Enter Into Lobby</h3>
         <TextField id="outlined-basic" label="Username" value={username} onChange={(e)=>setUsername(e.target.value)} variant="outlined" />
           <Button variant="contained" onClick={connect}>Connect</Button>
-
+         {/* upar button mai onClick={connect} ye aayega */}
           <div>
             <video  ref={localVideoRef} autoPlay muted></video>
           </div>
