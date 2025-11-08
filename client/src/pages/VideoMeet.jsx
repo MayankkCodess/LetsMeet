@@ -16,7 +16,10 @@ import ScreenShareIcon from '@mui/icons-material/ScreenShare';
 import StopScreenShareIcon from '@mui/icons-material/StopScreenShare'
 import ChatIcon from '@mui/icons-material/Chat'
 // import server from '../environment';
-const server_url= "http://localhost:8000";
+const server_url = import.meta.env.VITE_API_URL;
+
+// Use server_url wherever you call backend API
+
 
 // const server_url = server;
 

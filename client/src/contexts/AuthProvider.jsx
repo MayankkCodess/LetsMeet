@@ -3,9 +3,14 @@ import axios from "axios"
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./AuthContext.jsx";
 
+
+const API_URL = import.meta.env.VITE_API_URL;
+
 const client = axios.create({
-    baseURL:"http://localhost:8000/api/v1/users"
+   baseURL: API_URL + "/api/v1/users"
 })
+
+
 
 export const AuthProvider = ({children})=>{
     const authContext = useContext(AuthContext)
